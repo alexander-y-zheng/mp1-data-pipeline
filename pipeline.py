@@ -85,8 +85,6 @@ def main():
     
     if validate_input(args.input) == False:
         sys.exit(1)
-    
-    pass  # TODO: implement
 
 
 if __name__ == "__main__":
