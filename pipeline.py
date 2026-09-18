@@ -19,12 +19,52 @@ logger = logging.getLogger(__name__)
 
 def setup_logging(verbose=False):
     """Configure logging for the pipeline."""
-    pass  # TODO: implement
+    
+    logging.basicConfig(
+        level = logging.DEBUG if verbose else logging.INFO,
+        format = "%(asctime)s %(levelname)-8s %(message)s",
+        datefmt = "%H:%M:%S"
+    )
 
 
 def parse_arguments():
     """Parse command-line arguments."""
-    pass  # TODO: implement
+    parser = argparse.ArgumentParser(
+        description = "Data Processing Pipeline"
+    )
+    
+    parser.add_argument(
+        "--input", "-i",
+        required = True,
+        help = "Input file to process"
+    )
+    
+    parser.add_argument(
+        "--output", "-o",
+        default = "output.txt",
+        help = "Output file name"
+    )
+    
+    parser.add_argument(
+        "--format",
+        choices = ["json", "csv"],
+        default = "csv",
+        help = "Output format"
+    )
+    
+    parser.add_argument(
+        "--verbose", "-v",
+        action = "store_true",
+        help = "Enable verbose logging"
+    )
+    
+    args = parser.parse_args()
+    
+    setup_logging(verbose=args.verbose)
+    
+    logger.debug(f"Arguments parsed: input = {args.input}, output = {args.output}, format = {args.format}")
+    
+    return args
 
 
 def validate_input(filepath):
@@ -34,6 +74,9 @@ def validate_input(filepath):
 
 def main():
     """Main pipeline function."""
+    
+    args = parse_arguments()
+    
     pass  # TODO: implement
 
 
