@@ -41,7 +41,7 @@ def parse_arguments():
     
     parser.add_argument(
         "--output", "-o",
-        default = "output.txt",
+        required = True,
         help = "Output file name"
     )
     
