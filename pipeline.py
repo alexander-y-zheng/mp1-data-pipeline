@@ -69,13 +69,22 @@ def parse_arguments():
 
 def validate_input(filepath):
     """Check whether the input path exists and is a file."""
-    pass  # TODO: implement
+    
+    if not Path(filepath).is_file():
+        logger.error(f"Input file not found: {filepath}")
+        return False
+    
+    logger.info(f"Input file validated: {filepath}")
+    return True
 
 
 def main():
     """Main pipeline function."""
     
     args = parse_arguments()
+    
+    if validate_input(args.input) == False:
+        sys.exit(1)
     
     pass  # TODO: implement
 
