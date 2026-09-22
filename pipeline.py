@@ -63,7 +63,7 @@ def parse_arguments():
     
     setup_logging(verbose=args.verbose)
     
-    logger.debug(f"Arguments parsed: input = {args.input}, output = {args.output}, format = {args.format}")
+    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}, format={args.format}")
     
     return args
 
