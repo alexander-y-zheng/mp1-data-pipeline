@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 def load_csv(filepath):
-    """Load a CSV file into a DataFrame."""
+    """Load a CSV file into a DataFrame.
+    filepath is a Path object.
+    """
     df = pd.read_csv(filepath)
     
     logger.info(f"Loaded CSV file: {filepath} ({df.shape[0]} rows)")
@@ -23,7 +25,9 @@ def load_csv(filepath):
 
 
 def load_json(filepath):
-    """Load a JSON file into a Python object (dict or list)."""
+    """Load a JSON file into a Python object (dict or list).
+    filepath is a Path object.
+    """
     
     with open(filepath, "r") as f:
         data = json.load(f)
@@ -34,7 +38,9 @@ def load_json(filepath):
 
 
 def load_yaml(filepath):
-    """Load a YAML file into a Python object."""
+    """Load a YAML file into a Python object.
+    filepath is a Path object.
+    """
     
     with open(filepath, "r") as f:
         config = yaml.safe_load(f)
@@ -45,7 +51,9 @@ def load_yaml(filepath):
 
 
 def load_data(filepath):
-    """Load a file based on its extension."""
+    """Load a file based on its extension.
+    filepath is a string, such as 'fixtures/sample.csv'
+    """
     
     path = Path(filepath)
     ext = path.suffix.lower()
