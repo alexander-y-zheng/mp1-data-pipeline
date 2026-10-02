@@ -13,6 +13,7 @@ import logging
 import sys
 from pathlib import Path
 from data_loaders import load_data
+from data_processor import process_data, create_cleaning_report
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ def setup_logging(verbose=False):
     
     logging.basicConfig(
         level = logging.DEBUG if verbose else logging.INFO,
-        format = "%(asctime)s %(levelname)-8s %(message)s",
+        format="%(asctime)s %(levelname)-8s %(name)s — %(message)s",
         datefmt = "%H:%M:%S"
     )
 
@@ -39,18 +40,17 @@ def parse_arguments():
         required = True,
         help = "Input file to process"
     )
+
+    parser.add_argument(
+        "--config", "-c",
+        required = True,
+        help = "Configuration file for data processing"
+    )
     
     parser.add_argument(
         "--output", "-o",
         required = True,
         help = "Output file name"
-    )
-    
-    parser.add_argument(
-        "--format",
-        choices = ["json", "csv"],
-        default = "csv",
-        help = "Output format"
     )
     
     parser.add_argument(
@@ -63,7 +63,7 @@ def parse_arguments():
     
     setup_logging(verbose=args.verbose)
     
-    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}, format={args.format}")
+    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}, config={args.config}")
     
     return args
 
@@ -85,12 +85,37 @@ def main():
     args = parse_arguments()
     
     if validate_input(args.input) == False:
+        logger.error("Invalid input file: %s", args.input)
+        sys.exit(1)
+
+    if validate_input(args.config) == False:
+        logger.error("Invalid config file: %s", args.config)
         sys.exit(1)
         
     try:
         data = load_data(args.input)
+        config = load_data(args.config)
     except ValueError:
+        logger.error("Failed to load input or config file")
         sys.exit(1)
+
+    original_data = data.copy()
+
+    try:
+        processed_data = process_data(data, config)
+    except ValueError:
+        logger.error("Data processing failed")
+        sys.exit(1)
+
+    
+
+    logger.info("Processing complete: %s → %s rows", original_data.shape[0], processed_data.shape[0])
+
+    # save processed data to the output file
+    processed_data.to_csv(args.output, index=False)
+    logger.info(f"Processed data saved to {args.output}")
+    
+    print(create_cleaning_report(original_data, processed_data))
 
 
 if __name__ == "__main__":
