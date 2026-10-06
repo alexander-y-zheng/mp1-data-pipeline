@@ -11,7 +11,7 @@ def remove_duplicates(df):
     df = df.drop_duplicates()
     new_size = df.shape[0]
 
-    logger.debug(f"remove_duplicates: {original_size} → {new_size} rows")
+    logger.debug("remove_duplicates: %s -> %s rows", original_size, new_size)
 
     return df
 
@@ -31,15 +31,14 @@ def handle_missing(df, axis="rows"):
         raise ValueError("axis must be 'rows' or 'columns'")
 
     new_size = df.shape[0] if axis == "rows" else df.shape[1]
-    logger.debug(f"handle_missing ({axis}): {original_size} → {new_size} {axis}")
+    unit = "rows" if axis == "rows" else "columns"
+    logger.debug("handle_missing: %s -> %s %s", original_size, new_size, unit)
 
     return df
 
 
 def remove_outliers(df, columns, method, threshold):
     """Remove outliers from the specified numeric columns."""
-
-    original_size = df.shape[0]
 
     if method not in {"iqr", "zscore"}:
         logger.error("Unsupported outlier method: %s", method)
@@ -54,6 +53,7 @@ def remove_outliers(df, columns, method, threshold):
             logger.warning("Column is not numeric: %s", col)
             continue
 
+        original_size = df.shape[0]
         if method == "iqr":
             Q1 = df[col].quantile(0.25)
             Q3 = df[col].quantile(0.75)
@@ -68,9 +68,13 @@ def remove_outliers(df, columns, method, threshold):
             upper_bound = mean + threshold * std
             df = df[(df[col] >= lower_bound) & (df[col] <= upper_bound)]
 
-    new_size = df.shape[0]
-    
-    logger.debug("%s: threshold=%s, removed=%s", method, threshold, original_size - new_size)
+        logger.debug(
+            "%s: method=%s, threshold=%s, removed=%s",
+            col,
+            method,
+            threshold,
+            original_size - df.shape[0],
+        )
 
     return df
 
